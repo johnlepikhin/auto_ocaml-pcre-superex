@@ -1,0 +1,18 @@
+OASISFormat: 0.4
+Name: ocaml-pcre-superex
+Version: 1.0
+License: BSD-3-clause
+Authors: Evgenii Lepikhin
+BuildTools: ocamlbuild
+Plugins: META (0.4), DevFiles (0.4)
+Synopsis: Pcre matching on bulk of regexps
+Description:
+  This module is usful in case if one wants to get all
+  matching regexps in one turn, as fast as possible.
+
+Library pcre_superex
+  Path: src
+  Install: true
+  Modules: Superex
+  BuildDepends: pcre
+
