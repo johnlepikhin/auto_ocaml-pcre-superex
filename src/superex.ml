@@ -1,13 +1,31 @@
 
 module GroupsSet = Set.Make (struct type t = int let compare = compare end)
 
+let modifier_of_flag = function
+  | `CASELESS -> "i"
+  | `MULTILINE -> "m"
+  | `DOTALL -> "s"
+  | `EXTENDED -> "x"
+  | `ANCHORED -> ""
+  | `DOLLAR_ENDONLY -> ""
+  | `EXTRA -> ""
+  | `UNGREEDY -> ""
+  | `NO_UTF8_CHECK -> ""
+  | `NO_AUTO_CAPTURE -> ""
+  | `AUTO_CALLOUT -> ""
+  | `FIRSTLINE -> ""
+  | `UTF8 -> "u"
+
 let superex =
   let open Pcre in
   let rex_group_subst = subst "$1(?:$2" in
   let rex_group_matcher = regexp "([^\\\\])?\\(([^?])" in
   fun list ->
-    List.map (replace ~rex:rex_group_matcher ~itempl:rex_group_subst) list
-    |> List.map (Printf.sprintf "(%s)")
+    List.map (fun (flags, regexp) ->
+        let flags = List.map modifier_of_flag flags |> String.concat "" in
+        let regexp = replace ~rex:rex_group_matcher ~itempl:rex_group_subst regexp in
+        Printf.sprintf "((?%s)%s)" flags regexp
+      ) list
     |> String.concat "|"
     |> regexp
 
